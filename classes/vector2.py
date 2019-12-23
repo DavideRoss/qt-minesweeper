@@ -1,3 +1,7 @@
+# TODO: move to utils folder
+
+from settings import *
+
 class Vector2():
 
     def __init__(self, x, y):
@@ -10,16 +14,24 @@ class Vector2():
     def __repr__(self):
         return str(self)
 
-    def get_neighbor(self, radius=1, include_self=False, include_neg=False):
+    def get_neighbors(self, radius=1, include_self=False, check_inbound=True):
         out = []
         for x in range(self.x - radius, self.x + radius + 1):
             for y in range(self.y - radius, self.y + radius + 1):
-                if x < 0 or y < 0:
+                if not include_self and x == self.x and y == self.y:
                     continue
 
-                if x == self.x and y == self.y and not include_self:
+                if check_inbound and (x < 0 or y < 0 or x >= SIZE[0] or y >= SIZE[1]):
                     continue
 
                 out.append(Vector2(x, y))
 
         return out
+
+    def in_safe_zone(self, chk_x, chk_y, radius=1):
+        for x in range(self.x - radius, self.y + radius + 1):
+            for y in range(self.y - radius, self.y + radius +1):
+                if x == chk_x and y == chk_y:
+                    return True
+
+        return False

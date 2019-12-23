@@ -2,6 +2,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
 from settings import *
+from classes import Vector2
 
 class Cell(QPushButton):
 
@@ -19,21 +20,21 @@ class Cell(QPushButton):
     def mouseReleaseEvent(self, e):
         print(e.button())
         if e.button() == Qt.LeftButton:
-            self.board.handle_cell_click(self.x, self.y)
+            self.board.handle_cell_click(self.position)
         elif e.button() == Qt.RightButton:
             print('Flag')
             self.setStyleSheet('color: #a00; font-weight: bold')
         elif e.button() == Qt.MidButton:
             print('Prop')
 
-    def set_position(self, x, y):
-        self.x = x
-        self.y = y
+    # TODO: use vec2
+    def set_position(self, position):
+        self.position = position
 
     def update_info(self, has_mine):
         self.has_mine = has_mine
         
-        self.neighbors = self.board.count_neighbors(self.x, self.y)
+        self.neighbors = self.board.count_neighbors(self.position)
         self.setEnabled(True)
         self.setText('')
 

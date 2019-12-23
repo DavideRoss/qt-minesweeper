@@ -5,6 +5,9 @@ from PySide2.QtCore import *
 from classes import *
 
 def main():
+    # vec = Vector2(8, 8)
+    # print(vec.get_neighbors())
+
     app = QApplication(sys.argv)
     main_layout = GameLayout()
 

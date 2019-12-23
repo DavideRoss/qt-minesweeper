@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
-from classes import Board
+from classes import Board, Vector2
 from settings import *
 
 class GameLayout(QVBoxLayout):
@@ -41,7 +41,7 @@ class GameLayout(QVBoxLayout):
         self.addLayout(self.board.layout)
     
     def create_board(self):
-        self.board = Board(SIZE[0], SIZE[1])
+        self.board = Board(Vector2(SIZE[0], SIZE[1]))
 
     def handle_restart_button(self):
         self.board.create_board()
