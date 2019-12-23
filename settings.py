@@ -1,0 +1,3 @@
+CELL_SIZE = 35
+SIZE = [9, 9]
+MINES = 10
