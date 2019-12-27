@@ -4,10 +4,12 @@ from random import randrange
 
 from settings import *
 from classes.cell import Cell, Vector2
+import res
 
 class Board():
 
-    def __init__(self, size):
+    def __init__(self, game_layout, size):
+        self.game_layout = game_layout
         self.size = size
         self.FIRST_CLICK = False
 
@@ -18,11 +20,9 @@ class Board():
         
         curr_mines = 0
 
-        while curr_mines <= MINES:
+        while curr_mines < MINES:
             x = randrange(self.size.x)
             y = randrange(self.size.y)
-
-            print('{},{} = {}'.format(x, y, self.board[x][y]))
 
             if self.board[x][y] == 1:
                 continue
@@ -49,11 +49,7 @@ class Board():
     def update_layout(self):
         for x in range(self.size.x):
             for y in range(self.size.y):
-                self.buttons[x][y].update_info(self.get(x, y) == 1)
-
-    # TODO: remove
-    def get(self, x, y):
-        return self.board[x][y]
+                self.buttons[x][y].update_info(self.board[x][y] == 1)
 
     def count_neighbors(self, center):
         count = 0
@@ -67,27 +63,50 @@ class Board():
 
         return count
 
-    # TODO: use vector2 as param
     def handle_cell_click(self, pos):
         if not self.FIRST_CLICK:
             self.FIRST_CLICK = True
             self.create_board(safe_zone=pos)
             self.update_layout()
 
+        if self.board[pos.x][pos.y] == 1:
+            self.game_layout.set_game_over()
+
+            # TODO: stop time
+            # TODO: disable clicks
+
+            self.show_mines()
+            self.buttons[pos.x][pos.y].setStyleSheet(res.styles['ICON_MINE_RED'])
+            
+            return
+
         self.board[pos.x][pos.y] = 99
-        self.buttons[pos.x][pos.y].setEnabled(False)
+        curr_button = self.buttons[pos.x][pos.y]
+        curr_button.setEnabled(False)
 
         if self.count_neighbors(pos) == 0:
             neighbors = pos.get_neighbors()
+            curr_button.setStyleSheet(res.styles['ICON_CLICKED'])
 
             for n in neighbors:
                 if self.board[n.x][n.y] != 99:
                     self.handle_cell_click(n)
-        elif not self.buttons[pos.x][pos.y].has_mine:
-            self.buttons[pos.x][pos.y].setText(str(self.count_neighbors(pos)))
+        elif not curr_button.has_mine:
+            curr_button.setStyleSheet(res.get_neighbors_style(self.count_neighbors(pos)))
         else:
-            self.buttons[pos.x][pos.y].setText('M')
+            curr_button.setText('M')
+    
+    def edit_mine_count(self, count):
+        self.game_layout.edit_mine_count(count)
 
-    # TODO: remove?
-    def check_inbound(self, x, y):
-        return x >= 0 and y >= 0 and x < self.width and y < self.height
+    def show_mines(self):
+        for x in range(self.size.x):
+            for y in range(self.size.y):
+                curr_button = self.buttons[x][y]
+
+                if self.board[x][y] == 1 and not curr_button.has_flag:
+                    # TODO: check for flag
+                    self.buttons[x][y].setStyleSheet(res.styles['ICON_MINE'])
+
+                if curr_button.has_flag and self.board[x][y] != 1:
+                    self.buttons[x][y].setStyleSheet(res.styles['ICON_MINE_WRONG'])

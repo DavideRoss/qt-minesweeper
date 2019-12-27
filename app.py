@@ -3,15 +3,17 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
 from classes import *
+import res
 
 def main():
-    # vec = Vector2(8, 8)
-    # print(vec.get_neighbors())
-
     app = QApplication(sys.argv)
     main_layout = GameLayout()
+    res.init()
 
     window = QWidget()
+    window.setWindowTitle('Minesweeper')
+
+    window.setWindowIcon(res.icons['ICON_MINE_TRANSPARENT'])
     window.setLayout(main_layout)
     window.show()
 

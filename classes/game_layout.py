@@ -9,6 +9,10 @@ class GameLayout(QVBoxLayout):
     def __init__(self, parent=None):
         super(GameLayout, self).__init__(parent)
 
+        # TODO: reset on new game
+        self.current_mines = MINES
+        self.game_over = False
+        
         self.create_board()
         self.init_ui()
 
@@ -17,10 +21,10 @@ class GameLayout(QVBoxLayout):
 
         top_layout = QHBoxLayout()
 
-        mines_label = QLCDNumber()
-        mines_label.display(MINES)
-        mines_label.setSegmentStyle(QLCDNumber.Flat)
-        top_layout.addWidget(mines_label)
+        self.mines_label = QLCDNumber()
+        self.mines_label.display(self.current_mines)
+        self.mines_label.setSegmentStyle(QLCDNumber.Flat)
+        top_layout.addWidget(self.mines_label)
 
         restart_btn = QPushButton('Restart')
         restart_btn.clicked.connect(self.handle_restart_button)
@@ -31,6 +35,7 @@ class GameLayout(QVBoxLayout):
         self.clock_label.setSegmentStyle(QLCDNumber.Flat)
 
         # TODO: fix connect signal
+        # TODO: start on first click
         self.timer = QTimer()
         self.clock_label.connect(self.timer, SIGNAL('timeout()'), self.update_time)
         self.timer.start(1000)
@@ -41,7 +46,7 @@ class GameLayout(QVBoxLayout):
         self.addLayout(self.board.layout)
     
     def create_board(self):
-        self.board = Board(Vector2(SIZE[0], SIZE[1]))
+        self.board = Board(self, Vector2(SIZE[0], SIZE[1]))
 
     def handle_restart_button(self):
         self.board.create_board()
@@ -51,3 +56,11 @@ class GameLayout(QVBoxLayout):
         self.timer_counter += 1
         self.clock_label.display(self.timer_counter)
 
+    def edit_mine_count(self, count):
+        self.current_mines += count
+        self.mines_label.display(self.current_mines)
+
+    def set_game_over(self):
+        self.game_over = True
+        self.timer.stop()
+        # TODO: on screen report
