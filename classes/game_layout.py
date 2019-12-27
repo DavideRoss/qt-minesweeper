@@ -42,6 +42,7 @@ class GameLayout(QVBoxLayout):
 
         top_layout.addWidget(self.clock_label)
 
+        # self.addWidget(menuBar)
         self.addLayout(top_layout)
         self.addLayout(self.board.layout)
     
