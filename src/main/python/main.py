@@ -4,9 +4,12 @@ from os import listdir
 from PySide2.QtGui import QIcon
 from fbs_runtime.application_context.PySide2 import ApplicationContext, cached_property
 from components import MainWindow
+from settings import Settings
 
 class AppContext(ApplicationContext):
     def run(self):
+        Settings.initialize(self)
+        
         self.main_window.show()
         return self.app.exec_()
 

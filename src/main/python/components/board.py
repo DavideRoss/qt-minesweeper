@@ -2,16 +2,17 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from random import randrange
 
-from settings import *
+from settings import Settings
 from components import Cell
 from utils import Vector2
 
 class Board():
 
-    def __init__(self, ctx, game_layout, size):
+    def __init__(self, ctx, game_layout, size, mines):
         self.ctx = ctx
         self.game_layout = game_layout
         self.size = size
+        self.mines = mines
 
         self.layout = QGridLayout()
         self.layout.setHorizontalSpacing(0)
@@ -26,7 +27,7 @@ class Board():
         
         curr_mines = 0
 
-        while curr_mines < MINES:
+        while curr_mines < self.mines:
             x = randrange(self.size.x)
             y = randrange(self.size.y)
 
@@ -106,6 +107,7 @@ class Board():
         else:
             curr_button.setText('M')
     
+    # TODO: remove function (merge)
     def edit_mine_count(self, count):
         self.game_layout.edit_mine_count(count)
 

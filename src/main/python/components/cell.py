@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
-from settings import *
+from settings import Settings
 from utils import Vector2
 # import res
 
@@ -13,8 +13,8 @@ class Cell(QPushButton):
         self.ctx = ctx
         self.board = board
 
-        self.setFixedSize(CELL_SIZE, CELL_SIZE)
-        self.setIconSize(QSize(CELL_SIZE, CELL_SIZE))
+        self.setFixedSize(Settings.CELL_SIZE, Settings.CELL_SIZE)
+        self.setIconSize(QSize(Settings.CELL_SIZE, Settings.CELL_SIZE))
 
         self.setStyleSheet(self.ctx.icons['ICON_EMPTY'])
 

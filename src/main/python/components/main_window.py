@@ -4,7 +4,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 
 from components import *
-from settings import *
+from settings import Settings
 from utils import Vector2
 
 class MainWindow(QMainWindow):
@@ -23,10 +23,13 @@ class MainWindow(QMainWindow):
         self.create_menus()
 
         self.game_layout = GameLayout(self.ctx)
-        self.game_layout.create_new_game(Vector2(SIZE[0], SIZE[1]), MINES)
+        self.game_layout.create_new_game(Vector2(Settings.SIZE[0], Settings.SIZE[1]), Settings.MINES)
 
         main_widget.setLayout(self.game_layout)
 
+    def closeEvent(self, e):
+        Settings.write_file(self.ctx)
+    
     def create_actions(self):
         self.newGameAct = QAction('&New', self, shortcut=QKeySequence('F2'), triggered=self.new_game)
 
@@ -45,7 +48,15 @@ class MainWindow(QMainWindow):
         self.difficultyGroup.addAction(self.newGameIntermediateAct)
         self.difficultyGroup.addAction(self.newGameExpertAct)
         self.difficultyGroup.addAction(self.newGameCustomAct)
-        self.newGameBeginnerAct.setChecked(True)
+
+        if Settings.DIFFICULTY_SETTING == 0:
+            self.newGameBeginnerAct.setChecked(True)
+        elif Settings.DIFFICULTY_SETTING == 1:
+            self.newGameIntermediateAct.setChecked(True)
+        elif Settings.DIFFICULTY_SETTING == 2:
+            self.newGameExpertAct.setChecked(True)
+        else:
+            self.newGameCustomAct.setChecked(True)
 
     def create_menus(self):
         self.game_menu = self.menuBar().addMenu('&Game')
@@ -68,23 +79,27 @@ class MainWindow(QMainWindow):
     # TODO: implement
     def new_game(self):
         # print('new game same settings')
-        self.game_layout.create_new_game(Vector2(15, 15), 10)
+        self.game_layout.create_new_game(Vector2(15, 15), 1)
 
     # TODO: implement
     def new_game_beginner(self):
-        print('new_game_beginner')
+        self.game_layout.create_new_game(Vector2(9, 9), 10)
+        Settings.DIFFICULTY_SETTING = 0
 
     # TODO: implement
     def new_game_intermediate(self):
-        print('new_game_intermediate')
+        self.game_layout.create_new_game(Vector2(16, 16), 40)
+        Settings.DIFFICULTY_SETTING = 1
 
     # TODO: implement
     def new_game_expert(self):
-        print('new_game_expert')
+        self.game_layout.create_new_game(Vector2(16, 30), 99)
+        Settings.DIFFICULTY_SETTING = 2
 
     # TODO: implement
     def new_game_custom(self):
         print('new_game_custom')
+        Settings.DIFFICULTY_SETTING = 3
 
     # TODO: implement
     def show_best_times(self):

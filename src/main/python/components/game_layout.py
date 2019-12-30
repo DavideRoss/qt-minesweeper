@@ -46,6 +46,7 @@ class GameLayout(QVBoxLayout):
         self.timer.stop()
 
     def create_new_game(self, size, mines):
+        # TODO: resize window to fit mines without border
         if hasattr(self, 'board'):
             self.board.unload_board()
             self.removeItem(self.board.layout)
@@ -54,7 +55,7 @@ class GameLayout(QVBoxLayout):
         self.timer_counter = 0
         self.current_mines = mines
         
-        self.board = Board(self.ctx, self, size)
+        self.board = Board(self.ctx, self, size, mines)
         self.addLayout(self.board.layout)
         self.update_top_layout()
 
