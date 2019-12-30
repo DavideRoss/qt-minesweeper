@@ -1,19 +1,18 @@
-import sys
+# TODO: clean unused
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 
-from classes import *
-import res
+from components import *
 
-# TODO: move in separate file
 class MainWindow(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, ctx):
         super(MainWindow, self).__init__()
 
+        self.ctx = ctx
         self.setWindowTitle('Minesweeper')
-        self.setWindowIcon(res.icons['ICON_MINE_TRANSPARENT'])
+        self.setWindowIcon(ctx.app_icon)
 
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
@@ -21,7 +20,7 @@ class MainWindow(QMainWindow):
         self.create_actions()
         self.create_menus()
 
-        game_layout = GameLayout()
+        game_layout = GameLayout(self.ctx)
         main_widget.setLayout(game_layout)
 
     def create_actions(self):
@@ -121,16 +120,3 @@ class MainWindow(QMainWindow):
     # TODO: implement
     def show_about_window(self):
         print('show about')
-
-def main():
-    app = QApplication(sys.argv)
-    res.init()
-
-    # TODO: prevent window resize
-    main_win = MainWindow()
-    main_win.show()
-
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()

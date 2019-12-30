@@ -1,13 +1,16 @@
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
-from classes import Board, Vector2
+from components import Board
+from utils import Vector2
 from settings import *
 
 class GameLayout(QVBoxLayout):
 
-    def __init__(self, parent=None):
+    def __init__(self, ctx, parent=None):
         super(GameLayout, self).__init__(parent)
+
+        self.ctx = ctx
 
         # TODO: reset on new game
         self.current_mines = MINES
@@ -47,7 +50,7 @@ class GameLayout(QVBoxLayout):
         self.addLayout(self.board.layout)
     
     def create_board(self):
-        self.board = Board(self, Vector2(SIZE[0], SIZE[1]))
+        self.board = Board(self.ctx, self, Vector2(SIZE[0], SIZE[1]))
 
     def handle_restart_button(self):
         self.board.create_board()

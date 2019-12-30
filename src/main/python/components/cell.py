@@ -2,20 +2,21 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
 from settings import *
-from classes import Vector2
-import res
+from utils import Vector2
+# import res
 
 class Cell(QPushButton):
 
-    def __init__(self, board, parent=None):
+    def __init__(self, ctx, board, parent=None):
         super(Cell, self).__init__(parent)
+
+        self.ctx = ctx
+        self.board = board
 
         self.setFixedSize(CELL_SIZE, CELL_SIZE)
         self.setIconSize(QSize(CELL_SIZE, CELL_SIZE))
 
-        self.setStyleSheet(res.styles['ICON_EMPTY'])
-
-        self.board = board
+        self.setStyleSheet(self.ctx.icons['ICON_EMPTY'])
 
         self.is_opened = False
         self.has_flag = False
@@ -30,10 +31,10 @@ class Cell(QPushButton):
             self.has_flag = not self.has_flag
 
             if self.has_flag:
-                self.setStyleSheet(res.styles['ICON_FLAG'])
+                self.setStyleSheet(self.ctx.icons['ICON_FLAG'])
                 self.board.edit_mine_count(-1)
             else:
-                self.setStyleSheet(res.styles['ICON_EMPTY'])
+                self.setStyleSheet(self.ctx.icons['ICON_EMPTY'])
                 self.board.edit_mine_count(1)
 
         elif e.button() == Qt.MidButton:
@@ -51,7 +52,7 @@ class Cell(QPushButton):
 
         # TODO: remove in prod
         # if self.has_mine:
-        #     self.setStyleSheet(res.styles['ICON_MINE'])
+        #     self.setStyleSheet(self.ctx.icons['ICON_MINE'])
 
         # TODO: reset icon
         # self.setText('')

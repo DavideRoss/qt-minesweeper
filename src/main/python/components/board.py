@@ -3,16 +3,18 @@ from PySide2.QtCore import *
 from random import randrange
 
 from settings import *
-from classes.cell import Cell, Vector2
-import res
+from components import Cell
+from utils import Vector2
+# import res
 
 class Board():
 
-    def __init__(self, game_layout, size):
+    def __init__(self, ctx, game_layout, size):
+        self.ctx = ctx
         self.game_layout = game_layout
         self.size = size
-        self.FIRST_CLICK = False
 
+        self.FIRST_CLICK = False
         self.create_layout()
 
     def create_board(self, safe_zone=None):
@@ -42,7 +44,7 @@ class Board():
 
         for x in range(self.size.x):
             for y in range(self.size.y):
-                self.buttons[x][y] = Cell(self)
+                self.buttons[x][y] = Cell(self.ctx, self)
                 self.buttons[x][y].set_position(Vector2(x, y))
                 self.layout.addWidget(self.buttons[x][y], x, y)
 
@@ -76,7 +78,7 @@ class Board():
             # TODO: disable clicks
 
             self.show_mines()
-            self.buttons[pos.x][pos.y].setStyleSheet(res.styles['ICON_MINE_RED'])
+            self.buttons[pos.x][pos.y].setStyleSheet(self.ctx.icons['ICON_MINE_RED'])
             
             return
 
@@ -86,13 +88,13 @@ class Board():
 
         if self.count_neighbors(pos) == 0:
             neighbors = pos.get_neighbors()
-            curr_button.setStyleSheet(res.styles['ICON_CLICKED'])
+            curr_button.setStyleSheet(self.ctx.icons['ICON_CLICKED'])
 
             for n in neighbors:
                 if self.board[n.x][n.y] != 99:
                     self.handle_cell_click(n)
         elif not curr_button.has_mine:
-            curr_button.setStyleSheet(res.get_neighbors_style(self.count_neighbors(pos)))
+            curr_button.setStyleSheet(self.ctx.get_neighbors_style(self.count_neighbors(pos)))
         else:
             curr_button.setText('M')
     
@@ -106,7 +108,7 @@ class Board():
 
                 if self.board[x][y] == 1 and not curr_button.has_flag:
                     # TODO: check for flag
-                    self.buttons[x][y].setStyleSheet(res.styles['ICON_MINE'])
+                    self.buttons[x][y].setStyleSheet(self.ctx.icons['ICON_MINE'])
 
                 if curr_button.has_flag and self.board[x][y] != 1:
-                    self.buttons[x][y].setStyleSheet(res.styles['ICON_MINE_WRONG'])
+                    self.buttons[x][y].setStyleSheet(self.ctx.icons['ICON_MINE_WRONG'])
