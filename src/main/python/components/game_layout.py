@@ -11,50 +11,60 @@ class GameLayout(QVBoxLayout):
         super(GameLayout, self).__init__(parent)
 
         self.ctx = ctx
+        self.init_top_ui()
 
-        # TODO: reset on new game
-        self.current_mines = MINES
-        self.game_over = False
-        
-        self.create_board()
-        self.init_ui()
+    def init_top_ui(self):
+        # Layout
+        self.top_layout = QHBoxLayout()
+        self.top_layout.setObjectName("top_layout")
 
-    def init_ui(self):
-        self.timer_counter = 0
-
-        top_layout = QHBoxLayout()
-
+        # Mines left
         self.mines_label = QLCDNumber()
-        self.mines_label.display(self.current_mines)
         self.mines_label.setSegmentStyle(QLCDNumber.Flat)
-        top_layout.addWidget(self.mines_label)
+        self.top_layout.addWidget(self.mines_label)
 
-        restart_btn = QPushButton('Restart')
-        restart_btn.clicked.connect(self.handle_restart_button)
-        top_layout.addWidget(restart_btn)
+        # Restart button
+        self.restart_btn = QPushButton('Restart')
+        self.restart_btn.clicked.connect(self.handle_restart_button)
+        self.top_layout.addWidget(self.restart_btn)
 
+        # Clock
         self.clock_label = QLCDNumber()
-        self.clock_label.display(0)
         self.clock_label.setSegmentStyle(QLCDNumber.Flat)
 
         # TODO: fix connect signal
-        # TODO: start on first click
         self.timer = QTimer()
         self.clock_label.connect(self.timer, SIGNAL('timeout()'), self.update_time)
+
+        self.top_layout.addWidget(self.clock_label)
+        self.addLayout(self.top_layout)
+
+    def start_timer(self):
         self.timer.start(1000)
 
-        top_layout.addWidget(self.clock_label)
+    def stop_timer(self):
+        self.timer.stop()
 
-        # self.addWidget(menuBar)
-        self.addLayout(top_layout)
+    def create_new_game(self, size, mines):
+        if hasattr(self, 'board'):
+            self.board.unload_board()
+            self.removeItem(self.board.layout)
+
+        self.game_over = False
+        self.timer_counter = 0
+        self.current_mines = mines
+        
+        self.board = Board(self.ctx, self, size)
         self.addLayout(self.board.layout)
-    
-    def create_board(self):
-        self.board = Board(self.ctx, self, Vector2(SIZE[0], SIZE[1]))
+        self.update_top_layout()
 
+    def update_top_layout(self):
+        self.mines_label.display(self.current_mines)
+        self.clock_label.display(0)
+    
+    # TODO: remove hard count
     def handle_restart_button(self):
-        self.board.create_board()
-        self.board.update_layout()
+        self.create_new_game(Vector2(15, 15), 10)
 
     def update_time(self):
         self.timer_counter += 1
@@ -65,6 +75,5 @@ class GameLayout(QVBoxLayout):
         self.mines_label.display(self.current_mines)
 
     def set_game_over(self):
-        self.game_over = True
-        self.timer.stop()
+        self.stop_timer()
         # TODO: on screen report

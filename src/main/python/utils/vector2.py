@@ -14,14 +14,14 @@ class Vector2():
     def __repr__(self):
         return str(self)
 
-    def get_neighbors(self, radius=1, include_self=False, check_inbound=True):
+    def get_neighbors(self, max_size, radius=1, include_self=False, check_inbound=True):
         out = []
         for x in range(self.x - radius, self.x + radius + 1):
             for y in range(self.y - radius, self.y + radius + 1):
                 if not include_self and x == self.x and y == self.y:
                     continue
 
-                if check_inbound and (x < 0 or y < 0 or x >= SIZE[0] or y >= SIZE[1]):
+                if check_inbound and (x < 0 or y < 0 or x >= max_size.x or y >= max_size.y):
                     continue
 
                 out.append(Vector2(x, y))

@@ -5,7 +5,6 @@ from random import randrange
 from settings import *
 from components import Cell
 from utils import Vector2
-# import res
 
 class Board():
 
@@ -14,11 +13,16 @@ class Board():
         self.game_layout = game_layout
         self.size = size
 
+        self.layout = QGridLayout()
+        self.layout.setHorizontalSpacing(0)
+        self.layout.setVerticalSpacing(0)
+
         self.FIRST_CLICK = False
         self.create_layout()
 
     def create_board(self, safe_zone=None):
-        self.board = [[0 for y in range(self.size.y + 1)] for x in range(self.size.x + 1)]
+        # TODO: Check right size (was size.xy + 1)
+        self.board = [[0 for y in range(self.size.y)] for x in range(self.size.x)]
         
         curr_mines = 0
 
@@ -38,10 +42,6 @@ class Board():
     def create_layout(self):
         self.buttons = [[0 for y in range(self.size.y)] for x in range(self.size.x)]
 
-        self.layout = QGridLayout()
-        self.layout.setHorizontalSpacing(0)
-        self.layout.setVerticalSpacing(0)
-
         for x in range(self.size.x):
             for y in range(self.size.y):
                 self.buttons[x][y] = Cell(self.ctx, self)
@@ -53,12 +53,18 @@ class Board():
             for y in range(self.size.y):
                 self.buttons[x][y].update_info(self.board[x][y] == 1)
 
+    def unload_board(self):
+        for row in self.buttons:
+            for b in row:
+                self.layout.removeWidget(b)
+                b.deleteLater()
+
+        self.buttons = []
+
     def count_neighbors(self, center):
         count = 0
 
-        neighbors = center.get_neighbors()
-
-        # TODO: convert to oneline
+        neighbors = center.get_neighbors(self.size)
         for pos in neighbors:
             if self.board[pos.x][pos.y] == 1:
                 count += 1
@@ -70,12 +76,14 @@ class Board():
             self.FIRST_CLICK = True
             self.create_board(safe_zone=pos)
             self.update_layout()
+            self.game_layout.start_timer()
 
         if self.board[pos.x][pos.y] == 1:
             self.game_layout.set_game_over()
 
-            # TODO: stop time
-            # TODO: disable clicks
+            for row in self.buttons:
+                for btn in row:
+                    btn.set_clickable(False)
 
             self.show_mines()
             self.buttons[pos.x][pos.y].setStyleSheet(self.ctx.icons['ICON_MINE_RED'])
@@ -87,7 +95,7 @@ class Board():
         curr_button.setEnabled(False)
 
         if self.count_neighbors(pos) == 0:
-            neighbors = pos.get_neighbors()
+            neighbors = pos.get_neighbors(self.size)
             curr_button.setStyleSheet(self.ctx.icons['ICON_CLICKED'])
 
             for n in neighbors:

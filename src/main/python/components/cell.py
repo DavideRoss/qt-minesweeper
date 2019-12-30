@@ -21,9 +21,19 @@ class Cell(QPushButton):
         self.is_opened = False
         self.has_flag = False
         self.has_mine = False
+        self.clickable = True
         self.neighbors = 0
 
+    def __str__(self):
+        return '({}, {})'.format(str(self.position.x), str(self.position.y))
+
+    def __repr__(self):
+        return str(self)
+
     def mouseReleaseEvent(self, e):
+        if not self.clickable:
+            return
+        
         # TODO: still show button on left click with flag
         if e.button() == Qt.LeftButton and not self.has_flag:
             self.board.handle_cell_click(self.position)
@@ -40,7 +50,6 @@ class Cell(QPushButton):
         elif e.button() == Qt.MidButton:
             print('Prop')
 
-    # TODO: use vec2
     def set_position(self, position):
         self.position = position
 
@@ -50,10 +59,5 @@ class Cell(QPushButton):
         self.neighbors = self.board.count_neighbors(self.position)
         self.setEnabled(True)
 
-        # TODO: remove in prod
-        # if self.has_mine:
-        #     self.setStyleSheet(self.ctx.icons['ICON_MINE'])
-
-        # TODO: reset icon
-        # self.setText('')
-        # self.setIcon(res.icons['ICON_EMPTY'])
+    def set_clickable(self, click):
+        self.clickable = click
