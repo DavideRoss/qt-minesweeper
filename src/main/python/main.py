@@ -25,6 +25,17 @@ class AppContext(ApplicationContext):
         return icns
 
     @cached_property
+    def faces(self):
+        faces = {}
+
+        for f in listdir(self.get_resource('faces')):
+            name = f.replace('.png', '').upper()
+            path = self.get_resource('faces/' + f).replace('\\', '/')
+            faces[name] = 'border-image: url(\'{}\') 0 0 0 0 stretch stretch; border-width: 0px'.format(path)
+
+        return faces
+
+    @cached_property
     def main_window(self):
         return MainWindow(self)
 

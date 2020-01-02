@@ -19,6 +19,7 @@ class Board():
         self.layout.setVerticalSpacing(0)
 
         self.FIRST_CLICK = False
+        self.WIN_REPORT = False
         self.create_layout()
 
     def create_board(self, safe_zone=None):
@@ -93,7 +94,7 @@ class Board():
 
         self.board[pos.x][pos.y] = 99
         curr_button = self.buttons[pos.x][pos.y]
-        curr_button.setEnabled(False)
+        curr_button.is_opened = True
 
         if self.count_neighbors(pos) == 0:
             neighbors = pos.get_neighbors(self.size)
@@ -104,8 +105,8 @@ class Board():
                     self.handle_cell_click(n)
         elif not curr_button.has_mine:
             curr_button.setStyleSheet(self.ctx.get_neighbors_style(self.count_neighbors(pos)))
-        else:
-            curr_button.setText('M')
+
+        self.check_for_win()
     
     # TODO: remove function (merge)
     def edit_mine_count(self, count):
@@ -122,3 +123,26 @@ class Board():
 
                 if curr_button.has_flag and self.board[x][y] != 1:
                     self.buttons[x][y].setStyleSheet(self.ctx.icons['ICON_MINE_WRONG'])
+
+    def set_button_style_normal(self):
+        self.game_layout.set_button_style_normal()
+
+    def set_button_style_danger(self):
+        self.game_layout.set_button_style_danger()
+
+    def count_flags(self, pos):
+        return sum(self.buttons[p.x][p.y].has_flag for p in pos)
+
+    def check_for_win(self):
+        count = 0
+
+        for r in self.board:
+            count += sum(x == 0 for x in r)
+
+        if count == 0 and not self.WIN_REPORT:
+            self.game_layout.set_win()
+            self.WIN_REPORT = True
+
+            for row in self.buttons:
+                for btn in row:
+                    btn.set_clickable(False)

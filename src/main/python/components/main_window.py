@@ -23,7 +23,9 @@ class MainWindow(QMainWindow):
         self.create_menus()
 
         self.game_layout = GameLayout(self.ctx)
-        self.game_layout.create_new_game(Vector2(Settings.SIZE[0], Settings.SIZE[1]), Settings.MINES)
+        # TODO: load from last setting
+        # self.game_layout.create_new_game(Vector2(Settings.SIZE[0], Settings.SIZE[1]), Settings.MINES)
+        self.game_layout.create_new_game(Vector2(Settings.SIZE[0], Settings.SIZE[1]), 10)
 
         main_widget.setLayout(self.game_layout)
 

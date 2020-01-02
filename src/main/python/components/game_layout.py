@@ -24,17 +24,21 @@ class GameLayout(QVBoxLayout):
         self.top_layout.addWidget(self.mines_label)
 
         # Restart button
-        self.restart_btn = QPushButton('Restart')
+        self.restart_btn = QPushButton()
+
+        self.restart_btn.setFixedSize(50, 50)
         self.restart_btn.clicked.connect(self.handle_restart_button)
+        self.restart_btn.pressed.connect(self.set_button_style_pressed)
+        self.restart_btn.released.connect(self.set_button_style_normal)
+        self.set_button_style_normal()
+
         self.top_layout.addWidget(self.restart_btn)
 
         # Clock
         self.clock_label = QLCDNumber()
         self.clock_label.setSegmentStyle(QLCDNumber.Flat)
-
-        # TODO: fix connect signal
         self.timer = QTimer()
-        self.clock_label.connect(self.timer, SIGNAL('timeout()'), self.update_time)
+        self.timer.timeout.connect(self.update_time)
 
         self.top_layout.addWidget(self.clock_label)
         self.addLayout(self.top_layout)
@@ -77,4 +81,18 @@ class GameLayout(QVBoxLayout):
 
     def set_game_over(self):
         self.stop_timer()
+        self.restart_btn.setStyleSheet(self.ctx.faces['FACE_DEAD'])
         # TODO: on screen report
+
+    def set_win(self):
+        self.stop_timer()
+        self.restart_btn.setStyleSheet(self.ctx.faces['FACE_WIN'])
+
+    def set_button_style_pressed(self):
+        self.restart_btn.setStyleSheet(self.ctx.faces['FACE_CLICKED'])
+    
+    def set_button_style_normal(self):
+        self.restart_btn.setStyleSheet(self.ctx.faces['FACE_NORMAL'])
+
+    def set_button_style_danger(self):
+        self.restart_btn.setStyleSheet(self.ctx.faces['FACE_DANGER'])
