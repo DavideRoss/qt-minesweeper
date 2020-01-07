@@ -23,7 +23,6 @@ class Board():
         self.create_layout()
 
     def create_board(self, safe_zone=None):
-        # TODO: Check right size (was size.xy + 1)
         self.board = [[0 for y in range(self.size.y)] for x in range(self.size.x)]
         
         curr_mines = 0
@@ -108,7 +107,6 @@ class Board():
 
         self.check_for_win()
     
-    # TODO: remove function (merge)
     def edit_mine_count(self, count):
         self.game_layout.edit_mine_count(count)
 
@@ -118,7 +116,6 @@ class Board():
                 curr_button = self.buttons[x][y]
 
                 if self.board[x][y] == 1 and not curr_button.has_flag:
-                    # TODO: check for flag
                     self.buttons[x][y].setStyleSheet(self.ctx.icons['ICON_MINE'])
 
                 if curr_button.has_flag and self.board[x][y] != 1:

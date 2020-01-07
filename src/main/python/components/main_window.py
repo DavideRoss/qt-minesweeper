@@ -41,8 +41,7 @@ class MainWindow(QMainWindow):
         self.exitGameAct = QAction('E&xit', self, triggered=self.exit_game)
 
         self.helpAct = QAction('&Commands...', self, shortcut=QKeySequence('F1'), triggered=self.show_help_window)
-        # TODO: remove shortcut
-        self.aboutAct = QAction('&About Minesweeper...', self, shortcut=QKeySequence('F3'), triggered=self.show_about_window)
+        self.aboutAct = QAction('&About Minesweeper...', self, triggered=self.show_about_window)
 
     def create_menus(self):
         self.game_menu = self.menuBar().addMenu('&Game')

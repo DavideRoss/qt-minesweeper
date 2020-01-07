@@ -3,7 +3,6 @@ from PySide2.QtCore import *
 
 from settings import Settings
 from utils import Vector2
-# import res
 
 class Cell(QPushButton):
 
@@ -29,7 +28,6 @@ class Cell(QPushButton):
     def __repr__(self):
         return str(self)
 
-    # TODO: rework on single style refresh function
     def set_temp_style(self):
         if self.has_flag:
             return
@@ -79,7 +77,6 @@ class Cell(QPushButton):
             for p in self.position.get_neighbors(self.board.size):
                 self.board.buttons[p.x][p.y].restore_temp_style()
 
-            # TODO: only on number cells
             neighbors = self.position.get_neighbors(self.board.size, include_self=True)
             flags = self.board.count_flags(neighbors)
             

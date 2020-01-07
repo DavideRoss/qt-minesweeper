@@ -2,8 +2,6 @@ from configparser import ConfigParser
 
 CONFIG_FILE_NAME = 'config.ini'
 
-# TODO: handle exceptions
-
 class Settings():
     CELL_SIZE = 32
     SIZE = [9, 9]
@@ -11,13 +9,17 @@ class Settings():
 
     @staticmethod
     def initialize(ctx):
-        Settings.CFG_PATH = ctx.get_resource(CONFIG_FILE_NAME)
+        try:
+            Settings.CFG_PATH = ctx.get_resource(CONFIG_FILE_NAME)
 
-        Settings.config = ConfigParser()
-        Settings.config.read(Settings.CFG_PATH)
+            Settings.config = ConfigParser()
+            Settings.config.read(Settings.CFG_PATH)
 
-        Settings.SIZE = [int(Settings.config.get('game', 'size_x')), int(Settings.config.get('game', 'size_y'))]
-        Settings.MINES = int(Settings.config.get('game', 'mines'))
+            Settings.SIZE = [int(Settings.config.get('game', 'size_x')), int(Settings.config.get('game', 'size_y'))]
+            Settings.MINES = int(Settings.config.get('game', 'mines'))
+        except:
+            # Rewrite file over if corrupted
+            Settings.write_file(ctx)
 
     @staticmethod
     def write_file(ctx):
