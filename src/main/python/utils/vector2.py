@@ -1,5 +1,3 @@
-# TODO: move to utils folder
-
 from settings import *
 
 class Vector2():

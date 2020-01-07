@@ -46,11 +46,7 @@ class GameLayout(QVBoxLayout):
     def start_timer(self):
         self.timer.start(1000)
 
-    def stop_timer(self):
-        self.timer.stop()
-
     def create_new_game(self, size, mines):
-        # TODO: resize window to fit mines without border
         if hasattr(self, 'board'):
             self.board.unload_board()
             self.removeItem(self.board.layout)
@@ -58,6 +54,7 @@ class GameLayout(QVBoxLayout):
         self.game_over = False
         self.timer_counter = 0
         self.current_mines = mines
+        self.timer.stop()
         
         self.board = Board(self.ctx, self, size, mines)
         self.addLayout(self.board.layout)
@@ -67,9 +64,8 @@ class GameLayout(QVBoxLayout):
         self.mines_label.display(self.current_mines)
         self.clock_label.display(0)
     
-    # TODO: remove hard count
     def handle_restart_button(self):
-        self.create_new_game(Vector2(15, 15), 10)
+        self.create_new_game(Vector2(Settings.SIZE[0], Settings.SIZE[1]), Settings.MINES)
 
     def update_time(self):
         self.timer_counter += 1
@@ -80,12 +76,11 @@ class GameLayout(QVBoxLayout):
         self.mines_label.display(self.current_mines)
 
     def set_game_over(self):
-        self.stop_timer()
+        self.timer.stop()
         self.restart_btn.setStyleSheet(self.ctx.faces['FACE_DEAD'])
-        # TODO: on screen report
 
     def set_win(self):
-        self.stop_timer()
+        self.timer.stop()
         self.restart_btn.setStyleSheet(self.ctx.faces['FACE_WIN'])
 
     def set_button_style_pressed(self):
